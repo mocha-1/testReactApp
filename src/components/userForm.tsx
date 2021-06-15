@@ -1,52 +1,95 @@
 
-import { Form, Button, Col,Row } from 'react-bootstrap'
+
+import { Form, Button, Col, Row } from 'react-bootstrap'
+import { useForm } from "react-hook-form";
+
 import './userForm.css'
 
 
-function UserForm() {
+interface User {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    mobile: string;
+    email: string;
+  }
+
+  const defaultuser: User = {
+    _id: "",
+    firstName: "",
+    lastName: "",
+    mobile: "",
+    email: ""
+  }
+
+function UserForm({users = defaultuser , onSubmit }: {
+    users?: User;
+    onSubmit: (key: User) => void ;
+    }) {
+
+    const { 
+        register, 
+        handleSubmit,
+        formState: { errors }
+    } = useForm<User>({
+        defaultValues: users
+      });
+
+    
+
     return (
       <>
-
-        <Form>
-        <Form.Group as={Row} controlId="formPlaintextPassword">
+      <Form data-testid="form-element"  onSubmit={handleSubmit(User => onSubmit(User))} >
+        <Form.Group as={Row} >
             <Form.Label column sm="1">
                 Firstname
             </Form.Label>
-        <Col sm="5">
-            <Form.Control type="firstname" placeholder="Enter firstname.." />
-        </Col>
-        
+            <Col >
+                <Form.Control {...register("firstName", { required: true })}
+                type="firstName" placeholder="Enter firstname.." 
+                defaultValue={ users.firstName }/>
+                {errors.firstName && <p>firstname is required</p>}
+            </Col>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <Form.Label column sm="1" >
                 Lastname
             </Form.Label>
-        
-        <Col sm="5">
-            <Form.Control type="lastname" placeholder="Enter lastname.." />
-        </Col>
+            <Col >
+                <Form.Control {...register("lastName", { required: true })}
+                type="lastName" placeholder="Enter lastname.." 
+                defaultValue={ users.lastName }/>
+                {errors.lastName && <p>lastname is required</p>}
+            </Col>
         </Form.Group>
-        </Form>
 
-        <Form>
         <Form.Group as={Row} controlId="formPlaintextPassword">
             <Form.Label column sm="1">
                 Email
             </Form.Label>
-        <Col sm="5">
-            <Form.Control type="email" placeholder="Enter email.." />
-        </Col>
+            <Col >
+                <Form.Control {...register("email", { required: true })}
+                type="email" placeholder="Enter email.." 
+                defaultValue={ users.email }/>
+                {errors.email && <p>email is required</p>}
+            </Col>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <Form.Label column sm="1" >
                 Mobile No.
             </Form.Label>
-        
-        <Col sm="5">
-            <Form.Control type="mobile" placeholder="Enter mobile phone.." />
-        </Col>
+            <Col >
+                <Form.Control {...register("mobile", { required: true })}
+                type="mobile" placeholder="Enter mobile phone.." 
+                defaultValue={ users.mobile }/>
+                {errors.mobile && <p>mobile no. is required</p>}
+            </Col>
         </Form.Group>
-        </Form>
+        
 
-        <Button className="float-right" variant="primary" type="submit" size="lg" > Submit </Button>
+        <Button className="float-right" variant="primary" type="submit"
+                size="lg" > Submit   
+        </Button>
 
-
+      </Form>
       </>
     );
   }

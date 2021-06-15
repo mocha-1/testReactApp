@@ -1,43 +1,44 @@
 
-import { Modal, Table } from 'react-bootstrap'
-import React, { Fragment } from 'react'
-import { useState } from 'react';
+import { Modal, Table, Button } from 'react-bootstrap'
+import { useState, Fragment } from 'react'
+
 import UserForm from './userForm'
 import './userList.css'
 
 
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  email: string;
+}
+const defaultuser: User = {
+  _id: "",
+  firstName: "",
+  lastName: "",
+  mobile: "",
+  email: ""
+}
 
-function UserList() {
+function UserList({users, onEdit, onDelete}: {
+  users: User[];
+  onEdit: (key: User) => void ;
+  onDelete: (keyid: string) => void ;
+  })
+    {
     const [show, setShow] = useState(false);
-
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const [user, setUser] = useState<User>(defaultuser)
 
-    // const { users } =  useContext(GlobalContext);
-    // console.log(users) 
-
-    const users = [
-            {
-                id: 1,
-                firstname: 'one',
-                lastname: 'One',
-                email: 'one@gmail.com',
-                mobile: '0123456789'
-            },
-            {
-              id: 2,
-              firstname: 'two',
-              lastname: 'Two',
-              email: 'two@gmail.com',
-              mobile: '0123456789'
-          },
-        ];
+    const handleShow = (tempuser: User) => { 
+      setShow(true);
+      setUser(tempuser);
+    }
 
     return (
     <>
       <div className = 'userList'>
-          
-    
           <Table responsive>
             <thead>
               <tr>
@@ -51,19 +52,21 @@ function UserList() {
             </thead>
             <tbody>
             
-                {users.map((user, i) => {
+                {users.map((user: User) => {
                   return (
-                    <Fragment>
-                    <tr key={i}>
-                        <td>{user.id}</td>
-                        <td>{user.firstname}</td>
-                        <td>{user.lastname}</td>
+                    <Fragment key={user._id}>
+                    <tr >
+                        <td></td>
+                        <td>{user.firstName}</td>
+                        <td>{user.lastName}</td>
                         <td>{user.email}</td>
                         <td>{user.mobile}</td>
                         <td >
-                        <button type="button" className="btn btn-secondary" onClick={ handleShow } >Edit</button>
+                        <button type="button" className="btn btn-secondary" 
+                        onClick={() => handleShow(user) } >Edit</button>
                         &nbsp;
-                        <button type="button" className="btn btn-danger">Delete</button>
+                        <button type="button" className="btn btn-danger" 
+                        onClick={() => onDelete(user._id) }>Delete</button>
                         </td>
                     </tr>
                     </Fragment>
@@ -80,8 +83,11 @@ function UserList() {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-              <UserForm/>
+              <UserForm users={user} onSubmit={onEdit}/>
           </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>Close</Button>
+          </Modal.Footer>
         </Modal>
       </div>
     </>
